@@ -1,29 +1,36 @@
-name: Cache Test
+name: Cache Test Workflow
 
+# Trigger the workflow on push to main branch
 on:
   push:
     branches:
       - main
 
 jobs:
-  build:
+  cache-job:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repo
+      # Step 1: Checkout the repository
+      - name: Checkout repository
         uses: actions/checkout@v3
 
+      # Step 2: Cache dependencies
       - name: Cache dependencies
-        id: cache-deps
+        id: cache-step
         uses: actions/cache@v4
         with:
-          path: ~/.cache/my-dependencies
+          # Path to cache (can be ~/.cache for demo purposes)
+          path: ~/.cache
+          # Fixed key for priming the cache
           key: cache-a612c08
 
-      - name: prime-cache-a612c08
+      # Step 3: Prime the cache
+      - name: Prime cache-a612c08
+        run: echo "Cache hit? ${{ steps.cache-step.outputs.cache-hit }}"
+
+      # Step 4: Example step to simulate using dependencies
+      - name: Install demo dependencies
         run: |
-          if [ "${{ steps.cache-deps.outputs.cache-hit }}" == "true" ]; then
-            echo "Cache hit!"
-          else
-            echo "Cache miss."
-          fi
+          mkdir -p ~/.cache/demo
+          echo "dependency content" > ~/.cache/demo/file.txt
 
